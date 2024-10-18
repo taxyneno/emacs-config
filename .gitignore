@@ -1,0 +1,9 @@
+.cache/*
+.lsp-session-v1
+auto-save-list
+backups/*
+elpa/*
+eshell/*
+history
+transient/*
+tree-sitter/*
