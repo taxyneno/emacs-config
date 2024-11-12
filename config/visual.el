@@ -2,6 +2,9 @@
 (menu-bar-mode -1)
 (tool-bar-mode -1)
 
+;; always make text wrap around current resolution
+(setq global-visual-line-mode 1)
+
 ;; side bars
 (scroll-bar-mode -1)
 
@@ -55,6 +58,13 @@
 ;; tab bar
 (setq tab-bar-close-button-show nil)
 (setq tab-bar-new-button nil)
+
+(use-package annotate)
+
+(use-package nyan-mode
+  :config 
+  (nyan-mode)
+  (nyan-start-animation))
 
 (provide 'visual)
 

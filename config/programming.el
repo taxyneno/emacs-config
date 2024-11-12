@@ -9,11 +9,14 @@
   (setq yas-wrap-around-region t) ;; Allow wrapping around region when expanding snippets
   (yas-global-mode 1))
 
+;; simple eglot configuration. should prob
+;; move languages to their own block
 (use-package eglot
   :after yasnippet
   :ensure t
-  :hook ((prog-mode . eglot-ensure)
+  :hook ((python-mode . eglot-ensure)
 		 (go-ts-mode . eglot-ensure)
+		 (yaml-ts-mode . eglot-ensure)
 		 (before-save . eglot-format-buffer)
          ;; Hook to ignore jsonrpc--log-event
          (eglot-managed-mode . (lambda () (fset #'jsonrpc--log-event #'ignore)))
@@ -22,7 +25,25 @@
   :config
   (setq eglot-events-buffer-size 0)
   (setq eglot-auto-display-help-buffer nil)
-  (setq eglot-report-progress nil))
+  (setq eglot-report-progress nil)
+  (add-to-list 'eglot-server-programs '(elixir-ts-mode "language_server.sh")))
+
+(use-package
+ elixir-ts-mode
+ :hook (elixir-ts-mode . eglot-ensure)
+ (elixir-ts-mode
+  .
+  (lambda ()
+    (push '(">=" . ?\u2265) prettify-symbols-alist)
+    (push '("<=" . ?\u2264) prettify-symbols-alist)
+    (push '("!=" . ?\u2260) prettify-symbols-alist)
+    (push '("==" . ?\u2A75) prettify-symbols-alist)
+    (push '("=~" . ?\u2245) prettify-symbols-alist)
+    (push '("<-" . ?\u2190) prettify-symbols-alist)
+    (push '("->" . ?\u2192) prettify-symbols-alist)
+    (push '("<-" . ?\u2190) prettify-symbols-alist)
+    (push '("|>" . ?\u25B7) prettify-symbols-alist)))
+ (before-save . eglot-format))
 
 (use-package eldoc
   :after eglot
@@ -45,16 +66,21 @@
 
 (use-package hl-todo
   :config
-  (global-hl-todo-mode))
+  (global-hl-todo-mode)
+  )
+
+(use-package slime
+  :config
+(setq inferior-lisp-program "sbcl")
+(setq slime-complete-symbol*-fancy t))
 
 (use-package corfu
   :after eglot
-  ;; TAB-and-Go customizations
   :custom
   (corfu-cycle t)           ;; Enable cycling for `corfu-next/previous'
   (corfu-preselect 'prompt) ;; Always preselect the prompt
 
-  ;; Use TAB for cycling, default is `corfu-complete'.
+  ;; Use tab for cycling :D
   :bind
   (:map corfu-map
         ("TAB" . corfu-next)
